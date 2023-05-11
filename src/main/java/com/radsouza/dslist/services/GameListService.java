@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.radsouza.dslist.dto.GameListDTO;
-import com.radsouza.dslist.dto.GameMinDTO;
-import com.radsouza.dslist.entities.Game;
 import com.radsouza.dslist.entities.GameList;
 import com.radsouza.dslist.repositories.GameListRepository;
 
