@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.radsouza.dslist.dto.GameListDTO;
 import com.radsouza.dslist.entities.GameList;
+import com.radsouza.dslist.projections.GameMinProjection;
 import com.radsouza.dslist.repositories.GameListRepository;
+import com.radsouza.dslist.repositories.GameRepository;
 
 //@Component
 @Service
@@ -16,6 +18,9 @@ public class GameListService {
 	
 	@Autowired
 	private GameListRepository gameListRepository;
+	
+	@Autowired
+	private GameRepository gameRepository;
 	
 	@Transactional(readOnly = true)
 	public GameListDTO findById(Long id) {
@@ -29,6 +34,21 @@ public class GameListService {
 		List<GameList> result = gameListRepository.findAll();
 		List<GameListDTO> dto = result.stream().map(x -> new GameListDTO(x)).toList();
 		return dto;
+	}
+	
+	@Transactional
+	public void move(Long listId, int sourceIndex, int targetIndex) {
+		List<GameMinProjection> list = gameRepository.searchByList(listId);
+		GameMinProjection obj = list.remove(sourceIndex);
+		list.add(targetIndex, obj);
+		
+		int min = sourceIndex < targetIndex ? sourceIndex : targetIndex;
+		int max = sourceIndex < targetIndex ? targetIndex : sourceIndex;
+		
+		for (int i = min; i <= max; i++) {
+			gameListRepository.updateBelongingPosition(listId, list.get(i).getId(), i);
+		}
+		
 	}
 
 }
